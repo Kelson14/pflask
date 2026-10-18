@@ -5,7 +5,7 @@ from dao.turma_dao import TurmaDAO
 from dao.curso_dao import CursoDAO
 
 app = Flask(__name__)
-app.secret_key = "Solokt" # Chave secreta para sessões e flash messages
+app.secret_key = "solokt"  # Chave secreta para sessões e flash messages
 
 @app.route('/')
 def home():
@@ -35,6 +35,7 @@ def salvar_aluno(id=None):
     dao = AlunoDAO()
     result = dao.salvar(id, nome, idade, cidade) 
 
+
     if result["status"] == "ok":
         flash("Aluno salvo com sucesso!", "success")
     else:
@@ -43,12 +44,6 @@ def salvar_aluno(id=None):
 
     return redirect('/aluno')
 
-
-@app.route('/professor')
-def listar_professores():
-    dao = ProfessorDAO()
-    lista = dao.listar()
-    return render_template('professor/lista_professor.html', lista=lista)
 
 @app.route('/professor')
 def listar_professor():
@@ -76,6 +71,7 @@ def salvar_professor():
         flash(result["mensagem"], "danger")
 
     return redirect('/professor')
+
 
 
 @app.route('/saudacao1/<nome>')
@@ -106,11 +102,13 @@ def listar_turma():
     return render_template('turma/lista_turma.html', lista=lista)
 
 
+
 @app.route('/curso')
-def listar_cursos():
+def listar_curso():
     dao = CursoDAO()
     lista = dao.listar()
     return render_template('curso/lista_curso.html', lista=lista)
+
 
 @app.route('/curso/form_curso')
 def form_curso():
@@ -131,8 +129,6 @@ def salvar_curso():
         flash(result["mensagem"], "danger")
 
     return redirect('/curso')
-
-
 
 
 @app.route('/contato')

@@ -11,7 +11,7 @@ class AlunoDAO:
         lista = cursor.fetchall()
         conn.close()
         return lista
-
+    
     def salvar(self, id, nome, idade, cidade):
         conn = get_connection()
         cursor = conn.cursor()
