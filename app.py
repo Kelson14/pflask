@@ -5,7 +5,7 @@ from dao.turma_dao import TurmaDAO
 from dao.curso_dao import CursoDAO
 
 app = Flask(__name__)
-app.secret_key = "solokt"  # Chave secreta para sessões e flash messages
+app.secret_key = "Solokt"  # Chave secreta para sessões e flash messages
 
 @app.route('/')
 def home():
