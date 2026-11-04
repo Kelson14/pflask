@@ -14,15 +14,39 @@ class ProfessorDAO:
 
 
     def salvar(self, id, nome, disciplina):
-            conn = get_connection()
-            cursor = conn.cursor()
-            try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        try:
+            if id: #Atualizar pois o valor para o ID foi informado
+                cursor.execute('UPDATE professor SET nome= %s, disciplina= %s WHERE id= %s', (nome, disciplina, id))
+            else: # Inserir
                 cursor.execute('INSERT INTO professor (nome, disciplina) VALUES (%s, %s)', (nome, disciplina))
-                conn.commit()
-                return {"status": "ok"}
+            conn.commit()
+            return {"status": "ok"}
             
-            except Exception as e:
-                return {"status": "erro", "mensagem": f"Erro: {str(e)}"}
+        except Exception as e:
+            return {"status": "erro", "mensagem": f"Erro: {str(e)}"}
             
-            finally:
-                conn.close()
+        finally:
+            conn.close()
+
+
+    def buscar_por_id(self, id):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, nome, disciplina FROM professor WHERE id = %s', (id,))
+        registro = cursor.fetchone() # Retorna o registro selecionado
+        conn.close()
+        return registro
+
+    def remover(self,id):
+        conn = get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('DELETE FROM professor WHERE id = %s', (id,))
+            conn.commit()
+            return {"status": "ok"}
+        except Exception as e:
+            return {"status": "erro", "mensagem": f"Erro: {str(e)}"}
+        finally:
+            conn.close()
