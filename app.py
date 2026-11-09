@@ -23,9 +23,11 @@ def listar_alunos():
     lista = dao.listar()
     return render_template('aluno/lista_aluno.html', lista=lista)
 
+
 @app.route('/aluno/form')
 def form_aluno():
     return render_template('aluno/form.html', aluno=None)
+
 
 @app.route('/aluno/salvar/', methods=['POST'])  # Inserção
 @app.route('/aluno/salvar/<int:id>', methods=['POST']) # Atualização
@@ -44,6 +46,7 @@ def salvar_aluno(id=None):
 
 
     return redirect('/aluno')
+
 
 @app.route('/aluno/editar/<int:id>')
 def editar_aluno(id):
@@ -128,6 +131,21 @@ def login():
     dados = f"Usuário: {usuario}, Senha: {senha}, E-mail: {email}"
     return render_template('saudacao/saudacao.html', valor_recebido=dados)
 
+@app.route('/desafio/')
+def desafio():
+    nome = request.args.get('nome')
+    return render_template('desafio/desafio.html', valor_recebido=nome)
+
+
+@app.route('/formulario', methods=['POST'])
+def formulario():
+    nome = request.form['nome']
+    cpf = request.form['cpf']
+    data_nascimento = request.form['data_nascimento']
+    nome_da_mae = request.form['nome_da_mae']
+    nome_do_pai = request.form['nome_do_pai']
+    dados = f"Nome: {nome}, Data de Nascimento: {data_nascimento}, CPF: {cpf}, Nome da Mãe: {nome_da_mae}, Nome do Pai: {nome_do_pai}"
+    return render_template('desafio/desafio.html', valor_recebido=dados)
 
 
 @app.route('/turma')
@@ -136,7 +154,44 @@ def listar_turma():
     lista = dao.listar()
     return render_template('turma/lista_turma.html', lista=lista)
 
+@app.route('/turma/form')
+def form_turma():
+    dao = TurmaDAO()
+    cursos = CursoDAO().listar()
+    professores = ProfessorDAO().listar()
+    return render_template('turma/form.html', turma=None, cursos=cursos, professores=professores)
 
+@app.route('/turma/salvar/', methods=['POST'])
+@app.route('/turma/salvar/<int:id>', methods=['POST'])
+def salvar_turma(id=None):
+    semestre = request.form['semestre']
+    curso_id = request.form['curso_id']
+    professor_id = request.form['professor_id']
+    dao = TurmaDAO()
+    result = dao.salvar(id, semestre, curso_id, professor_id)
+    if result["status"] == "ok":
+        flash("Cadastro salvo com sucesso!", "success")
+    else:
+        flash(result["mensagem"], "danger")
+    return redirect('/turma')
+
+@app.route('/turma/editar/<int:id>')
+def editar_turma(id):
+    dao = TurmaDAO()
+    turma = dao.buscar_por_id(id)
+    cursos = CursoDAO().listar()
+    professores = ProfessorDAO().listar()
+    return render_template('turma/form.html', turma=turma, cursos=cursos, professores=professores)
+
+@app.route('/turma/remover/<int:id>')
+def remover_turma(id):
+    dao = TurmaDAO()
+    resultado = dao.remover(id)
+    if resultado["status"] == "ok":
+        flash("Turma removida com sucesso!", "success")
+    else:
+        flash(resultado["mensagem"], "danger")
+    return redirect('/turma')
 
 @app.route('/curso')
 def listar_curso():
@@ -180,6 +235,59 @@ def remover_curso(id):
     else:
         flash(resultado["mensagem"], "danger")
     return redirect('/curso')
+
+
+@app.route('/matricula')
+def listar_matriculas():
+    dao = MatriculaDAO()
+    lista = dao.listar()
+    return render_template('matricula/lista_matricula.html', lista=lista)
+
+
+@app.route('/matricula/form')
+def form_matricula():
+    dao = MatriculaDAO()
+    alunos = dao.listar_alunos()
+    turmas = dao.listar_turmas()
+    return render_template('matricula/form.html',matricula=None,alunos=alunos,turmas=turmas)
+
+
+@app.route('/matricula/salvar/', methods=['POST'])
+@app.route('/matricula/salvar/<int:id>', methods=['POST'])
+def salvar_matricula(id=None):
+    aluno_id = request.form['aluno_id']
+    turma_id = request.form['turma_id']
+    dao = MatriculaDAO()
+    resultado = dao.salvar(id, aluno_id, turma_id)
+    if resultado["status"] == "ok":
+        flash("Matrícula salva com sucesso!", "success")
+    else:
+        flash(resultado["mensagem"], "danger")
+    return redirect('/matricula')
+
+
+@app.route('/matricula/editar/<int:id>')
+def editar_matricula(id):
+    dao = MatriculaDAO()
+    matricula = dao.buscar_por_id(id)
+    if matricula is None:
+        flash("Matrícula não encontrada!", "danger")
+        return redirect('/matricula')
+    alunos = dao.listar_alunos()
+    turmas = dao.listar_turmas()
+    return render_template('matricula/form.html',matricula=matricula,alunos=alunos,turmas=turmas)
+
+@app.route('/matricula/remover/<int:id>')
+def remover_matricula(id):
+    dao = MatriculaDAO()
+    resultado = dao.remover(id)
+    if resultado["status"] == "ok":
+        flash("Matrícula removida com sucesso!", "success")
+    else:
+        flash(resultado["mensagem"], "danger")
+    return redirect('/matricula')
+
+
 
 @app.route('/contato')
 def contato():
