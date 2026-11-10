@@ -8,13 +8,15 @@ class MatriculaDAO:
         cursor = conn.cursor()
 
         try:
-            cursor.execute(""" SELECT matricula.id, turma.semestre, aluno.nome, curso.nome_curso, professor.nome, professor.disciplina
-            FROM matricula
-            JOIN aluno ON matricula.aluno_id = aluno.id
-            JOIN curso ON matricula.curso_id = curso.id
-            JOIN turma ON matricula.turma_id = turma.id
-            JOIN professor ON turma.professor_id = professor.id
-            order by matricula.id desc
+            cursor.execute("""
+                SELECT matricula.id, turma.semestre, aluno.nome,
+                       curso.nome_curso, professor.nome, professor.disciplina
+                FROM matricula
+                JOIN aluno ON matricula.aluno_id = aluno.id
+                JOIN curso ON matricula.curso_id = curso.id
+                JOIN turma ON matricula.turma_id = turma.id
+                JOIN professor ON turma.professor_id = professor.id
+                ORDER BY matricula.id DESC
             """)
 
             lista = cursor.fetchall()
@@ -42,11 +44,13 @@ class MatriculaDAO:
         cursor = conn.cursor()
 
         try:
-            cursor.execute(""" SELECT turma.id, turma.semestre, curso.nome_curso, professor.nome, professor.disciplina
-            FROM turma
-            JOIN curso ON turma.curso_id = curso.id
-            JOIN professor ON turma.professor_id = professor.id
-            order by turma.id desc
+            cursor.execute("""
+                SELECT turma.id, turma.semestre, curso.nome_curso,
+                       professor.nome, professor.disciplina
+                FROM turma
+                JOIN curso ON turma.curso_id = curso.id
+                JOIN professor ON turma.professor_id = professor.id
+                ORDER BY turma.id DESC
             """)
 
             lista = cursor.fetchall()
@@ -61,7 +65,10 @@ class MatriculaDAO:
         cursor = conn.cursor()
 
         try:
-            cursor.execute("SELECT curso_id FROM turma WHERE id = %s", (turma_id,))
+            cursor.execute(
+                "SELECT curso_id FROM turma WHERE id = %s",
+                (turma_id,)
+            )
 
             resultado = cursor.fetchone()
 
@@ -74,10 +81,18 @@ class MatriculaDAO:
             curso_id = resultado[0]
 
             if id:
-                cursor.execute(""" UPDATE matricula SET aluno_id = %s, curso_id = %s, turma_id = %s WHERE id = %s """, (aluno_id, curso_id, turma_id, id))
+                cursor.execute("""
+                    UPDATE matricula
+                    SET aluno_id = %s, curso_id = %s, turma_id = %s
+                    WHERE id = %s
+                """, (aluno_id, curso_id, turma_id, id))
 
             else:
-                cursor.execute(""" INSERT INTO matricula (aluno_id, curso_id, turma_id) VALUES (%s, %s, %s) """, (aluno_id, curso_id, turma_id))
+                cursor.execute("""
+                    INSERT INTO matricula (aluno_id, curso_id, turma_id)
+                    VALUES (%s, %s, %s)
+                """, (aluno_id, curso_id, turma_id))
+
             conn.commit()
             return {"status": "ok"}
 
@@ -94,7 +109,12 @@ class MatriculaDAO:
         cursor = conn.cursor()
 
         try:
-            cursor.execute(""" SELECT id, aluno_id, turma_id FROM matricula WHERE id = %s """, (id,))
+            cursor.execute("""
+                SELECT id, aluno_id, turma_id
+                FROM matricula
+                WHERE id = %s
+            """, (id,))
+
             matricula = cursor.fetchone()
             return matricula
 
@@ -107,7 +127,10 @@ class MatriculaDAO:
         cursor = conn.cursor()
 
         try:
-            cursor.execute( "DELETE FROM matricula WHERE id = %s", (id,))
+            cursor.execute(
+                "DELETE FROM matricula WHERE id = %s",
+                (id,)
+            )
 
             conn.commit()
             return {"status": "ok"}
