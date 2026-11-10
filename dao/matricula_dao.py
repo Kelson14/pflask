@@ -57,7 +57,7 @@ class MatriculaDAO:
             curso_id = resultado[0]
 
             if id:
-                cursor.execute(""" UPDATE matriculaSET aluno_id = %s, curso_id = %s, turma_id = %s WHERE id = %s""",(aluno_id, curso_id, turma_id, id))
+                cursor.execute(""" UPDATE matricula SET aluno_id = %s, curso_id = %s, turma_id = %s WHERE id = %s """, (aluno_id, curso_id, turma_id, id))
             else:
                 cursor.execute(""" INSERT INTO matricula (aluno_id, curso_id, turma_id) VALUES (%s, %s, %s)""",(aluno_id, curso_id, turma_id))
             conn.commit()
