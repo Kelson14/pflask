@@ -3,6 +3,7 @@ from dao.aluno_dao import AlunoDAO
 from dao.professor_dao import ProfessorDAO
 from dao.turma_dao import TurmaDAO
 from dao.curso_dao import CursoDAO
+from dao.matricula_dao import MatriculaDAO
 
 app = Flask(__name__)
 app.secret_key = "Solokt"  # Chave secreta para sessões e flash messages
